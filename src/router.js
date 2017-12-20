@@ -15,7 +15,7 @@ module.exports = function (server) {
     });
     // 登录
     server.post('/auth/admin/login', adminAuthRoute.login);
-    //server.use('/admin/*', adminAuthRoute.auth);
+    server.use('/admin/*', adminAuthRoute.auth);
     // 角色:admin 模块:author
     server.patch('/admin/author', adminAuthorRoute.findOrCreate);
     server.post('/admin/author', adminAuthorRoute.create);

@@ -4,6 +4,19 @@ const models = require('../../models');
 // lib
 const authHelper = require('../../lib/auth');
 
+/**
+ * @api {get} /auth/admin/login 进行sha1加盐加密 再与数据库的做对比
+ * @apiName login
+ * @apiGroup login
+ * 
+ * @apiParam {string} password 密码(前端进行了md5加密)
+ * @apiParam {string} account 名字或电子邮箱
+ * 
+ * @apiSuccess {boolean} status 请求是否成功
+ * @apiSuccess {object} result 返回结果
+ * @apiSuccess {string} [type="JWT"] token类型
+ * @apiSuccess {string} token token字符串
+ */
 async function login(req, res, next) {
     // sha1 加密加盐
     req.body.password = authHelper.encrypt(req.body.password);

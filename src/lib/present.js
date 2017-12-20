@@ -21,8 +21,7 @@ global.HinterError.propotype = new Error();
  * 判断是否是空的对象 基本类型 number string boolean null undefined NaN都是true [] {} 也是true
  */
 function isEmptyObject(e) {
-    var t;
-    for (t in e)
+    for (let t in e)
         return !1;
     return !0;
 }

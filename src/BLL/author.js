@@ -4,7 +4,7 @@
 const models = require('../models/index');
 
 // lib
-const _ = require('lodash');
+const _ = require('utils2/lib/_');
 const DEBUG = require('debug')('APP:BLL_AUTHOR');
 
 async function findOrCreate(req, res, next) {

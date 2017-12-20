@@ -2,32 +2,23 @@
 
 // model
 const models = require('../models/index');
-const parser = require('D:/MyGitHub/html-parser/index');
 
 // lib
-const _ = require('lodash');
+const _ = require('utils2/lib/_');
 const DEBUG = require('debug')('APP:ADMIN_BOOK');
 
 async function findOrCreate(req, res, next) {
     DEBUG('admin find or create book method!');
-    const input = {
-        authorId: req.body.authorId,
-        name: req.body.name,
-        createdAt: Date.now(),
-        updatedAt: Date.now()
-    };
-    const t = await models.sequelize.transaction();
+
     try {
-        let result = await models.Book.findOne({ where: { name: req.body.name, authorId: req.body.authorId } }, { transaction: t });
+        let result = await models.Book.findOne({ where: { name: req.body.name, authorId: req.body.authorId } });
         if (_.isNil(result)) {
-            result = await models.Book.create(input, {
-                transaction: t
-            });
+            create(req, res, next);
+        } else {
+            res.return(result);
         }
-        await t.commit();
-        res.return(result);
+
     } catch (err) {
-        await t.rollback();
         next(err);
     }
 }
@@ -39,7 +30,8 @@ async function create(req, res, next) {
         authorId: req.body.authorId,
         name: req.body.name,
         createdAt: Date.now(),
-        updatedAt: Date.now()
+        updatedAt: Date.now(),
+        poster: req.body.poster || null
     };
     const t = await models.sequelize.transaction();
     try {
@@ -125,20 +117,9 @@ async function down(req, res, next) {
         res.set('Content-disposition', `attachment; filename*=utf-8''${encodeURIComponent(book.name)}`);
         let txt = '';
         for (let i = 0; i < result.length; i++) {
-            let temp = result[i];
-            txt += `${temp.title}\n${temp.content}`;
-
+            txt += `${result[i].title}\n${result[i].content}`;
         }
         txt = txt.replace(/&nbsp;/g, ' ').replace(/(<[/]?br[/]?>)|(<[/]?p>)/g, '\n');
-        // doc.parse(txt.replace(/&nbsp;/g, '').replace(/<\/br>/g, '\n'));
-        // txt = '';
-        // doc.bfsSync(function (node) {
-        //     if (node.nodeName === 'p') {
-        //         txt += '\n  ';
-        //     } else if (node.nodeName === '') {
-        //         txt += node.text;
-        //     }
-        // });
         res.write(txt);
         res.end();
     } else {

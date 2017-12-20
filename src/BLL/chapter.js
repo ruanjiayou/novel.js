@@ -4,7 +4,7 @@
 const models = require('../models/index');
 
 // lib
-const _ = require('lodash');
+const _ = require('utils2/lib/_');
 const DEBUG = require('debug')('APP:ADMIN_CHAPTER');
 
 /**
@@ -43,10 +43,6 @@ async function create(req, res, next) {
             result = await models.Chapter.create(input, {
                 transaction: t
             });
-            // if (await models.Chapter.update({ id: result.id + 2 }, { where: { id: result.id }, transaction: t })) {
-            //     result.id = result.id + 2;
-            //     console.log(`result.id:${result.id}`);
-            // };
         }
         await t.commit();
         res.return(result);
@@ -83,35 +79,33 @@ async function show(req, res, next) {
     };
     try {
         const result = await models.Chapter.findOne(filter);
-        let prev, next;
         if (_.isNil(result)) {
             throw new Error('not found');
-        } else {
-            prev = await models.Chapter.findOne({
-                where: {
-                    bookId: filter.where.bookId,
-                    id: {
-                        [models.sequelize.Op.lt]: filter.where.id
-                    }
-                },
-                attributes: ['id', 'title'],
-                order: [['id', 'DESC']],
-                limit: 1
-            });
-            next = await models.Chapter.findOne({
-                where: {
-                    bookId: filter.where.bookId,
-                    id: {
-                        [models.sequelize.Op.gt]: filter.where.id
-                    }
-                },
-                attributes: ['id', 'title'],
-                limit: 1
-            });
         }
+        let prevOne = await models.Chapter.findOne({
+            where: {
+                bookId: filter.where.bookId,
+                id: {
+                    [models.sequelize.Op.lt]: filter.where.id
+                }
+            },
+            attributes: ['id', 'title'],
+            order: [['id', 'DESC']],
+            limit: 1
+        });
+        let nextOne = await models.Chapter.findOne({
+            where: {
+                bookId: filter.where.bookId,
+                id: {
+                    [models.sequelize.Op.gt]: filter.where.id
+                }
+            },
+            attributes: ['id', 'title'],
+            limit: 1
+        });
         return res.return(result, {
-            prev: prev,
-            next: next
+            prev: prevOne,
+            next: nextOne
         });
     } catch (err) {
         return next(err);
