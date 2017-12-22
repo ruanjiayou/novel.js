@@ -1,22 +1,31 @@
 const express = require('express');
 const Server = express();
 const path = require('path');
+const helmet = require('helmet');
 const bodyParser = require('body-parser');
 const router = require('./router');
 const ejs = require('ejs');
 const sysCfg = require('./config/site');
 const present = require('./lib/present');
+const fileHandle = require('./lib/file');
 
 // 1.设置express模板引擎
 Server.set('views', path.join(__dirname, 'template', 'views'));
 Server.set('view engine', 'html');
 Server.engine('.html', ejs.__express);
 ejs.delimiter = '$';
+// 安全部分
+Server.use(helmet());
+
 // 2.静态目录
 Server.use(express.static(path.join(__dirname, './public')));
 // 3.解析请求
 Server.use(bodyParser.json());
 Server.use(bodyParser.urlencoded({ extended: false }));
+// 文件处理中间件
+Server.use(fileHandle);
+// 自动清理文件...日
+//Server.use(multerAutoReap);
 // 4.session验证
 //auth(Server);
 // 4.全局变量

@@ -192,6 +192,11 @@ async function destroy(req, res, next) {
 
 }
 
+async function uploadPoster(req, res, next) {
+    console.log(req.files);
+    res.return({status: 'endd'});
+}
+
 async function down(req, res, next) {
     DEBUG('bookBLL down() method!');
     let book = await models.Book.findOne({ where: { id: req.params.bookId } });
@@ -217,6 +222,7 @@ module.exports = {
     show,
     create,
     update,
+    uploadPoster,
     destroy,
     down
 };

@@ -74,6 +74,10 @@ function update(req, res, next) {
     return BookBLL.update(req, res, next);
 }
 
+function uploadPoster(req, res, next){
+    return BookBLL.uploadPoster(req, res, next);
+}
+
 function destroy(req, res, next) {
     return BookBLL.destroy(req, res, next);
 }
@@ -84,5 +88,6 @@ module.exports = {
     list,
     show,
     update,
+    uploadPoster,
     destroy
 };

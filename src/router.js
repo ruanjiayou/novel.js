@@ -29,6 +29,7 @@ module.exports = function (server) {
     server.get('/admin/book', adminBookRoute.list);
     server.get('/admin/book/:bookId([0-9]+)', adminBookRoute.show);
     server.put('/admin/book/:bookId([0-9]+)', adminBookRoute.update);
+    server.post('/admin/book/upload-poster', adminBookRoute.uploadPoster);
     server.delete('/admin/book/:bookId([0-9]+)', adminBookRoute.destroy);
     // 角色:admin 模块:chapter
     server.post('/admin/book/:bookId([0-9]+)/chapter', adminChapterRoute.create);
