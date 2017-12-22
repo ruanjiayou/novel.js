@@ -87,5 +87,17 @@ module.exports = function (sequelize, TYPE) {
         model.hasMany(models.Comment);
         model.hasMany(models.Book);
     };
+    model.initialize = function () {
+        const data = [
+            {
+                id: 1,
+                email: '123456789@qq.com',
+                name: '阮家友',
+                roleId: 1,
+                password: '100c2c9d9937d117b8e398a1ecd852222017c2d6'
+            }
+        ];
+        return model.bulkCreate(data, { return: true });
+    };
     return model;
 };

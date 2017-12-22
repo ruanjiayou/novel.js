@@ -34,5 +34,6 @@ fs.readdirSync(basePath).filter((file) => {
 // });
 
 models.sequelize = DB;
+models.Op = DB.Op;
 
 module.exports = models;

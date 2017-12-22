@@ -6,15 +6,14 @@ const DEBUG = require('debug')('APP:AMIN_AUTHOR');
  * @apiName create
  * @apiGroup admin author
  * 
- * @apiParam {number} roleId
- * @apiParam {string} firstName
- * @apiParam {string} lastName
+ * @apiParam {string} name
  * 
  * @apiSuccess {number} id
  */
 function findOrCreate(req, res, next) {
-    // log
     DEBUG('enter admin author create route!');
+
+    req.body.roleId = 2;
 
     return AuthorBLL.findOrCreate(req, res, next);
 }
@@ -24,9 +23,7 @@ function findOrCreate(req, res, next) {
  * @apiName create
  * @apiGroup admin author
  * 
- * @apiParam {number} roleId
- * @apiParam {string} firstName
- * @apiParam {string} lastName
+ * @apiParam {string} name
  * 
  * @apiSuccess {number} id
  */
@@ -34,10 +31,28 @@ function create(req, res, next) {
     // log
     DEBUG('enter admin author create route!');
 
+    req.body.roleId = 2;
+
     return AuthorBLL.create(req, res, next);
 }
 
+/**
+ * @api {get} /admin/author 作者列表
+ * @apiName list
+ * @apiGroup admin author
+ * 
+ * @apiParam {string} [name] 姓名
+ * @apiParam {number} [roleId=2] 类型
+ * 
+ * @apiSuccess {number} id
+ * @apiSuccess {string} name
+ */
 function list(req, res, next) {
+
+    if (req.query.roleId === undefined) {
+        req.query.roleId = 2;
+    }
+
     return AuthorBLL.list(req, res, next);
 }
 

@@ -1,6 +1,6 @@
 const config = {
-    localPath: 'd:/website/blog.php/ueditor/php/upload/',
-    rootPath: '',
+    localPath: 'D:/WebSite/blog.php',
+    rootPath: '/ueditor/php/upload/image/',
     
 };
 

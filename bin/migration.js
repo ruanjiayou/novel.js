@@ -20,6 +20,7 @@ async function create() {
 }
 create().then(function () {
     console.log('数据库表已全部创建成功!');
+    process.exit();
 }).catch(function (err) {
     console.log(err.message);
 });

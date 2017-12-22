@@ -5,19 +5,32 @@ const models = require('../models/index');
 
 // lib
 const _ = require('utils2/lib/_');
+const Validator = require('utils2/lib/validator');
 const DEBUG = require('debug')('APP:ADMIN_BOOK');
 
 async function findOrCreate(req, res, next) {
     DEBUG('admin find or create book method!');
 
+    const validator = new Validator({
+        rules: {
+            name: 'required|string|min:1',
+            authorId: 'required|int'
+        }
+    });
+    const input = validator.filter(req.body);
     try {
-        let result = await models.Book.findOne({ where: { name: req.body.name, authorId: req.body.authorId } });
+        validator.check(input);
+    } catch (err) {
+        res.errors(new HinterError('validator', 'validate', err.message));
+    }
+
+    try {
+        let result = await models.Book.findOne({ where: input });
         if (_.isNil(result)) {
             create(req, res, next);
         } else {
             res.return(result);
         }
-
     } catch (err) {
         next(err);
     }
@@ -26,23 +39,35 @@ async function findOrCreate(req, res, next) {
 async function create(req, res, next) {
     DEBUG('admin create book method!');
 
-    const input = {
-        authorId: req.body.authorId,
-        name: req.body.name,
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-        poster: req.body.poster || null
-    };
+    const validator = new Validator({
+        rules: {
+            name: 'required|string|min:1',
+            authorId: 'required|int',
+            poster: 'nullable|string|min:1'
+        }
+    });
+    const input = validator.filter(req.body);
+    try {
+        validator.check(input);
+        input.createdAt = Date.now();
+        input.updatedAt = Date.now();
+    } catch (err) {
+        return next(err);
+    }
     const t = await models.sequelize.transaction();
     try {
+        let result = await models.User.findOne({ where: { id: input.authorId, roleId: 2 } });
+        if (_.isNil(result)) {
+            throw new HinterError('author', 'notFound');
+        }
         // authorId name 
-        let result = await models.Book.findOne({ where: { name: req.body.name, authorId: req.body.authorId } }, { transaction: t });
+        result = await models.Book.findOne({ where: { name: input.name, authorId: input.authorId } }, { transaction: t });
         if (_.isNil(result)) {
             result = await models.Book.create(input, {
                 transaction: t
             });
         } else {
-            throw new Error('book exists!');
+            throw new HinterError('book', 'exists');
         }
         await t.commit();
         res.return(result);
@@ -54,15 +79,35 @@ async function create(req, res, next) {
 
 async function list(req, res, next) {
     DEBUG('admin book list method!');
-
     req.paging();
-    const filter = {
-        attributes: ['id', 'name'],
-        limit: req.query.limit,
-        offset: (req.query.page - 1) * 50
-    };
+
+    const validator = new Validator({
+        rules: {
+            search: 'nullable|string',
+            bookName: 'nullable|string',
+            authorName: 'nullable|string',
+        }
+    });
+    const input = validator.filter(req.query);
     try {
+        validator.check(input);
+    } catch (err) {
+        return next(err);
+    }
+    try {
+        const filter = {
+            where: {},
+            attributes: ['id', 'name'],
+            limit: req.query.limit,
+            offset: (req.query.page - 1) * 50
+        };
+        if (input.bookName) {
+            filter.where.name = {
+                [models.Op.like]: `%${input.bookName}%`
+            };
+        }
         const result = await models.Book.findAndCountAll(filter);
+
         return res.paging(result, req.query);
     } catch (err) {
         return next(err);
@@ -72,15 +117,27 @@ async function list(req, res, next) {
 async function show(req, res, next) {
     DEBUG('admin book show method!');
 
-    const filter = {
-        where: {
-            id: req.params.bookId
+    const validator = new Validator({
+        rules: {
+            id: 'required|int'
         }
-    };
+    });
+    const input = validator.filter(req.query);
     try {
+        validator.check(input);
+    } catch (err) {
+        res.errors(err);
+    }
+
+    try {
+        const filter = {
+            where: {
+                id: input.bookId
+            }
+        };
         const result = await models.Book.findOne(filter);
         if (_.isNil(result)) {
-            throw new Error('book not Found!');
+            throw new HinterError('book', 'notFound');
         }
         return res.return(result);
     } catch (err) {
@@ -91,13 +148,40 @@ async function show(req, res, next) {
 async function update(req, res, next) {
     DEBUG('admin book update method!');
 
-    const filter = {
-        where: {
-            id: req.params.bookId
+    const validator = new Validator({
+        rules: {
+            id: 'required|int',
+            authorId: 'nullable|int',
+            count: 'nullable|int',
+            name: 'nullable|string|min:1',
+            poster: 'nullable|string',
+            description: 'nullable|string',
+            status: 'nullable|in:ing, end',
+            isApproved: 'nullable|boolean'
         }
-    };
+    });
+    const input = validator.filter(req.body);
     try {
-        await models.Book.update({ count: req.body.count }, filter);
+        validator.check(input);
+    } catch (err) {
+        return next(err);
+    }
+    try {
+        const filter = {
+            where: {
+                id: input.bookId
+            }
+        };
+        const book = await models.Book.findOne({
+            where: {
+                name: input.name,
+                authorId: input.authorId
+            }
+        });
+        if (!_.isNil(book)) {
+            throw new HinterError('book', 'exists');
+        }
+        await models.Book.update(input, filter);
         show(req, res, next);
     } catch (err) {
         next(err);

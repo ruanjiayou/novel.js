@@ -27,20 +27,20 @@ Server.use(function (req, res, next) {
 
 // 5.添加自定义响应方法(自动处理json:status与result)
 Server.use(present({
-    page: 'page', 
-    limit: 'limit', 
-    search: 'search', 
-    order: 'order', 
+    page: 'page',
+    limit: 'limit',
+    search: 'search',
+    order: 'order',
     errDir: path.join(__dirname, 'template/errors')
 }));
 // 6.路由 含token验证
 router(Server);
 // 7.error异常处理
 Server.use(function (err, req, res, next) {
-    if(err instanceof HinterError) {
+    if (err instanceof HinterError) {
         res.errors(err);
     } else if (err) {
-        res.status(500).send(`500 error! ${err.message}`);
+        res.status(500).send({ status: 'failed', message: `${err.message}` });
     } else {
         next();
     }
@@ -58,6 +58,6 @@ if (module.parent) {
 } else {
     // 监听端口，启动程序
     Server.listen(sysCfg.port, '0.0.0.0', function () {
-        console.log(`小说站 listening on port ${sysCfg.port}`);
+        console.log(`小说站后台API 监听端口:${sysCfg.port}`);
     });
 }

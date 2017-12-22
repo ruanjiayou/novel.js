@@ -9,10 +9,13 @@ const path = require('path');
 /**
  * 全局自定义错误类型
  */
-global.HinterError = function(fileName, type){
-    this.fileName = fileName,
+global.HinterError = function (fileName, type, detail) {
+    this.fileName = fileName;
     this.type = type;
     this.time = new Date().getTime();
+    if (detail) {
+        this.message = detail;
+    }
     return this;
 };
 global.HinterError.propotype = new Error();
@@ -93,7 +96,8 @@ const present = (params) => {
             return res.status(errorObj.statusCode).json({
                 status: false,
                 code: errorObj.code || 400,
-                message: errorObj.message
+                message: errorObj.message,
+                detail: err.message
             });
         };
         next();
