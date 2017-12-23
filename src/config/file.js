@@ -1,5 +1,5 @@
 const config = {
-    dest: './tmp/',
+    dest: '../.tmp',
     limits: {
         fieldNameSize: 100,
         fileSize: 1024 * 1024 * 1024,
