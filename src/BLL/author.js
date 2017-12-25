@@ -9,7 +9,7 @@ const Validator = require('utils2/lib/validator');
 const DEBUG = require('debug')('APP:BLL_AUTHOR');
 
 async function findOrCreate(req, res, next) {
-    DEBUG('admin find or create author method!');
+    DEBUG('BLL find or create author method!');
 
     const validator = new Validator({
         rules: {
@@ -43,7 +43,7 @@ async function findOrCreate(req, res, next) {
 }
 
 async function create(req, res, next) {
-    DEBUG('create author!');
+    DEBUG('BLL create author method!');
 
     const validator = new Validator({
         rules: {
@@ -77,7 +77,7 @@ async function create(req, res, next) {
 }
 
 async function list(req, res, next) {
-    DEBUG('ENTER admin author list method!');
+    DEBUG('BLL author list method!');
     req.paging();
 
     const validator = new Validator({
@@ -118,7 +118,7 @@ async function list(req, res, next) {
 }
 
 async function show(req, res, next) {
-    DEBUG('admin show author method!');
+    DEBUG('BLL show author method!');
 
     const filter = {
         where: {

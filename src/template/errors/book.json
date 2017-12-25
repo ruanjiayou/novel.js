@@ -3,5 +3,10 @@
         "code": 10200,
         "statusCode": 400,
         "message": "author's book exists!"
+    },
+    "notFound": {
+        "code": 10201,
+        "statusCode": 400,
+        "message": "author's book not found!"
     }
 }

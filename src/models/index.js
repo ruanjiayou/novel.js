@@ -17,7 +17,8 @@ const DB = new Sequelize(
         define: {
             // 默认驼峰命名 false 下划线蛇形 true
             underscored: false
-        }
+        },
+        timezone: cfg.timezone
     }
 );
 

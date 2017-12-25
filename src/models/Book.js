@@ -62,7 +62,11 @@ module.exports = function (sequelize, TYPE) {
             initialAutoIncrement: 1000000,
             getterMethods: {},
             setterMethods: {},
-            defaultScope: {},
+            defaultScope: {
+                where: {
+                    isApproved: true
+                }
+            },
             scopes: {
                 // includeAuthor: function () {
                 //     return {

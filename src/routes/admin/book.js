@@ -71,6 +71,9 @@ function show(req, res, next) {
 }
 
 function update(req, res, next) {
+
+    req.body.id = req.params.bookId;
+    
     return BookBLL.update(req, res, next);
 }
 

@@ -78,7 +78,7 @@ const present = (params) => {
          * @param {object} result 
          */
         res.return = (result, params) => {
-            let b = isEmptyObject(result);
+            let b = result === null ? true : false;
             let t = {
                 status: b ? false : true,
                 result: b ? null : result

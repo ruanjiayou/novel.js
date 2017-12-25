@@ -11,7 +11,7 @@ module.exports = {
     //数据库方言
     dialect: 'mysql',
     //数据库名
-    database: 'novel',
+    database: 'noveltest',
     session: {
         secret: 'session_cookie_name',
         key: 'session_cookie_secret',
@@ -22,5 +22,6 @@ module.exports = {
         min: 0,
         acquire: 30000,
         idle: 10000
-    }
+    },
+    timezone: '+08:00'
 };

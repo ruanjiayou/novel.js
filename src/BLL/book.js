@@ -6,10 +6,10 @@ const models = require('../models/index');
 // lib
 const _ = require('utils2/lib/_');
 const Validator = require('utils2/lib/validator');
-const DEBUG = require('debug')('APP:ADMIN_BOOK');
+const DEBUG = require('debug')('APP:BLL_BOOK');
 
 async function findOrCreate(req, res, next) {
-    DEBUG('admin find or create book method!');
+    DEBUG('BLL find or create book method!');
 
     const validator = new Validator({
         rules: {
@@ -37,7 +37,7 @@ async function findOrCreate(req, res, next) {
 }
 
 async function create(req, res, next) {
-    DEBUG('admin create book method!');
+    DEBUG('BLL create book method!');
 
     const validator = new Validator({
         rules: {
@@ -78,7 +78,7 @@ async function create(req, res, next) {
 }
 
 async function list(req, res, next) {
-    DEBUG('admin book list method!');
+    DEBUG('BLL book list method!');
     req.paging();
 
     const validator = new Validator({
@@ -106,8 +106,12 @@ async function list(req, res, next) {
                 [models.Op.like]: `%${input.bookName}%`
             };
         }
-        const result = await models.Book.findAndCountAll(filter);
-
+        let result;
+        if(res.locals.role === 'admin'){
+            result = await models.Book.scope(null).findAndCountAll(filter);
+        } else {
+            result = await models.Book.findAndCountAll(filter);
+        }
         return res.paging(result, req.query);
     } catch (err) {
         return next(err);
@@ -115,14 +119,14 @@ async function list(req, res, next) {
 }
 
 async function show(req, res, next) {
-    DEBUG('admin book show method!');
+    DEBUG('BLL book show method!');
 
     const validator = new Validator({
         rules: {
             id: 'required|int'
         }
     });
-    const input = validator.filter(req.query);
+    const input = validator.filter(req.params);
     try {
         validator.check(input);
     } catch (err) {
@@ -132,7 +136,7 @@ async function show(req, res, next) {
     try {
         const filter = {
             where: {
-                id: input.bookId
+                id: input.id
             }
         };
         const result = await models.Book.findOne(filter);
@@ -146,7 +150,7 @@ async function show(req, res, next) {
 }
 
 async function update(req, res, next) {
-    DEBUG('admin book update method!');
+    DEBUG('BLL book update method!');
 
     const validator = new Validator({
         rules: {
@@ -182,6 +186,9 @@ async function update(req, res, next) {
             throw new HinterError('book', 'exists');
         }
         await models.Book.update(input, filter);
+
+        req.params.id = book.id;
+
         show(req, res, next);
     } catch (err) {
         next(err);
@@ -189,16 +196,27 @@ async function update(req, res, next) {
 }
 
 async function destroy(req, res, next) {
+    try {
+        let book = await models.Book.findOne({ where: { id: req.params.bookId } });
+        if (!_.isNil(book)) {
+            book.destroy();
+            res.return();
+        } else {
+            throw new HinterError('book', 'notFound');
+        }
+    } catch (err) {
+        next(err);
+    }
 
 }
 
 async function uploadPoster(req, res, next) {
     console.log(req.files);
-    res.return({status: 'endd'});
+    res.return({ status: 'endd' });
 }
 
 async function down(req, res, next) {
-    DEBUG('bookBLL down() method!');
+    DEBUG('BLL book down() method!');
     let book = await models.Book.findOne({ where: { id: req.params.bookId } });
     let result = await models.Chapter.findAll({ attributes: ['title', 'content'], order: [['id', 'ASC']], where: { bookId: book.id } });
     if (!_.isNil(result) && !_.isNil(book)) {

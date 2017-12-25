@@ -6,7 +6,9 @@ const adminAuthorRoute = require('./routes/admin/author');
 const adminBookRoute = require('./routes/admin/book');
 const adminChapterRoute = require('./routes/admin/chapter');
 
+const publicAuthorRoute = require('./routes/admin/author');
 const publicBookRoute = require('./routes/public/book');
+const publicChapterRoute = require('./routes/admin/chapter');
 
 module.exports = function (server) {
     server.use('*', cors);
@@ -15,7 +17,7 @@ module.exports = function (server) {
     });
     // 登录
     server.post('/auth/admin/login', adminAuthRoute.login);
-    server.use('/admin/*', adminAuthRoute.auth);
+    //server.use('/admin/*', adminAuthRoute.auth);
     // 角色:admin 模块:author
     server.patch('/admin/author', adminAuthorRoute.findOrCreate);
     server.post('/admin/author', adminAuthorRoute.create);
@@ -39,6 +41,14 @@ module.exports = function (server) {
     server.delete('/admin/book/:bookId([0-9]+)/chapter/:chapterId([0-9]+)', adminChapterRoute.destroy);
 
     // 
+    
+    server.get('/author', publicAuthorRoute.list);
+    server.get('/author/:authorId([0-9]+)', publicAuthorRoute.show);
+    
+    server.get('/book', publicBookRoute.list);
+    server.get('/book/:bookId([0-9]+)', publicBookRoute.show);
     server.get('/book/:bookId([0-9]+)/down', publicBookRoute.down);
 
+    server.get('/book/:bookId([0-9]+)/chapter', publicChapterRoute.list);
+    server.get('/book/:bookId([0-9]+)/chapter/:chapterId([0-9]+)', publicChapterRoute.show);
 };

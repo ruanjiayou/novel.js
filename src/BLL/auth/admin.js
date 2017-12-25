@@ -62,6 +62,7 @@ async function auth(req, res, next) {
             throw new HinterError('auth', 'tokenInvalid');
         }
         res.locals.adminAuth = admin;
+        res.locals.role = 'admin';
         next();
     } catch (err) {
         next(err);

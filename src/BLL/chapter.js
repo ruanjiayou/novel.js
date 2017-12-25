@@ -5,21 +5,11 @@ const models = require('../models/index');
 
 // lib
 const _ = require('utils2/lib/_');
-const DEBUG = require('debug')('APP:ADMIN_CHAPTER');
+const DEBUG = require('debug')('APP:BLL_CHAPTER');
 
-/**
- * @api {post} /admin/book/:bookId([0-9]+)/chapter 添加章节
- * @apiName create
- * @apiGroup admin-chapter
- * 
- * @apiParam {number} bookId 书籍id
- * @apiParam {string} title 章节名称
- * @apiParam {string} content 章节内容
- * 
- * @apiSuccess {object} result 
- */
+
 async function create(req, res, next) {
-    DEBUG('admin chapterBLL create() method!');
+    DEBUG('BLL chapterBLL create() method!');
     const input = {
         bookId: req.body.bookId,
         title: req.body.title,
