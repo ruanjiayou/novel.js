@@ -50,7 +50,7 @@ module.exports = function (sequelize, TYPE) {
             timestamp: true,
             deletedAt: false,
             timezone: '+08:00',
-            engine: 'MYISAM',
+            //engine: 'MYISAM', change the database engine, e.g. to MyISAM. InnoDB is the default.
             indexes: [
                 {
                     fields: ['authorId'],
@@ -68,18 +68,17 @@ module.exports = function (sequelize, TYPE) {
                 }
             },
             scopes: {
-                // includeAuthor: function () {
-                //     return {
-                //         include: [
-                //             {
-                //                 model: sequelize.models.User,
-                //                 where: { roleId: 2 },
-                //                 attributes: ['id', 'name'],
-                //                 required: true
-                //             }
-                //         ]
-                //     };
-                // }
+                includeAuthor: function () {
+                    return {
+                        include: [
+                            {
+                                model: sequelize.models.User,
+                                attributes: ['id', 'name'],
+                                required: false
+                            }
+                        ]
+                    };
+                }
             },
         });
     // 类级方法
@@ -87,7 +86,10 @@ module.exports = function (sequelize, TYPE) {
     // 实例方法
 
     model.associate = function (models) {
-        model.belongsTo(models.User);
+        model.belongsTo(models.User, {
+            foreignKey: 'authorId',
+            targetKey: 'id'
+        });
         model.belongsTo(models.Catalog, {
             foreignKey: 'id',
             otherKey: 'bookId',

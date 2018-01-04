@@ -4,11 +4,12 @@ module.exports = function (sequelize, TYPE) {
             id: {
                 type: TYPE.BIGINT,
                 autoIncrement: true,
+                allowNull: false,
                 primaryKey: true
             },
             pid: {
                 type: TYPE.BIGINT,
-                allowNull: false,
+                allowNull: true,
                 comment: '分类的父分类'
             },
             name: {
@@ -20,11 +21,11 @@ module.exports = function (sequelize, TYPE) {
             charset: 'utf8',
             paranoid: false,
             timestamp: false,
-            engine: 'MYISAM',
+            //engine: 'MYISAM',
             indexes: [
                 {
-                    fields: ['pid'],
-                    name: 'pid'
+                    fields: ['id'],
+                    name: 'id'
                 }
             ],
             freezeTableName: true,
@@ -41,8 +42,8 @@ module.exports = function (sequelize, TYPE) {
 
     model.associate = function (models) {
         model.belongsTo(models.Catalog, {
-            foreignKey: 'id',
-            target: 'pid',
+            foreignKey: 'pid',
+            target: 'id',
             onDelete: 'cascade'
         });
     };

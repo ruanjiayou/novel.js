@@ -32,7 +32,7 @@ module.exports = function (sequelize, TYPE) {
             paranoid: true,
             timestamp: true,
             timezone: '+08:00',
-            engine: 'MYISAM',
+            //engine: 'MYISAM',
             indexes: [
                 {
                     fields: ['pid'],
@@ -44,7 +44,7 @@ module.exports = function (sequelize, TYPE) {
                 },
                 {
                     fields: ['userId'],
-                    name: 'userId'
+                    name: 'userId_index'
                 },
                 {
                     fields: ['chapterId'],

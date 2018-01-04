@@ -55,7 +55,7 @@ module.exports = function (sequelize, TYPE) {
             timestamp: true,
             deletedAt: false,
             timezone: '+08:00',
-            engine: 'MYISAM',
+            //engine: 'MYISAM',
             indexes: [
                 {
                     fields: ['email'],
@@ -84,8 +84,8 @@ module.exports = function (sequelize, TYPE) {
                 model: models.UserRoleMap
             }
         });
-        model.hasMany(models.Comment);
-        model.hasMany(models.Book);
+        //model.hasMany(models.Comment);
+        //model.hasMany(models.Book);
     };
     model.initialize = function () {
         const data = [

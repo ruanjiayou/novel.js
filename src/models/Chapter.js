@@ -19,6 +19,17 @@ module.exports = function (sequelize, TYPE) {
                 type: TYPE.TEXT,
                 defaultValue: '',
                 comment: '章节内容'
+            },
+            order: {
+                type: TYPE.INTEGER,
+                allowNull: false,
+                comment: '排序用'
+            },
+            url: {
+                type: TYPE.STRING,
+                allowNull: true,
+                defaultValue: null,
+                comment: '章节的url来源,下载失败或等待更新时用'
             }
         }, {
             comment: '书籍章节(没分卷~~)',
@@ -27,8 +38,19 @@ module.exports = function (sequelize, TYPE) {
             timestamp: true,
             deletedAt: false,
             timezone: '+08:00',
-            engine: 'MYISAM',
-            //indexes: [],
+            //engine: 'MYISAM',
+            indexes: [
+                // {
+                //     fileds: 'bookId',
+                //     name: 'bookId',
+                //     method: 'BTREE'
+                // },
+                // {
+                //     fileds: 'url',
+                //     name: 'url',
+                //     method: 'HASH'
+                // }
+            ],
             freezeTableName: true,
             getterMethods: {},
             setterMethods: {},
@@ -52,8 +74,7 @@ module.exports = function (sequelize, TYPE) {
             constraints: false
         });
         model.hasMany(models.Comment, {
-            foreignKey: 'id',
-            targetKey: 'chapterId',
+            foreignKey: 'chapterId',
             constraints: false
         });
     };

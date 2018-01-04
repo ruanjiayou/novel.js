@@ -16,7 +16,7 @@ module.exports = function (sequelize, TYPE) {
             paranoid: false,
             timestamp: false,
             timezone: '+08:00',
-            engine: 'MYISAM',
+            //engine: 'MYISAM',
             freezeTableName: true,
             getterMethods: {},
             setterMethods: {},

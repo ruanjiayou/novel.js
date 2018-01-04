@@ -97,7 +97,7 @@ async function list(req, res, next) {
     try {
         const filter = {
             where: {},
-            attributes: ['id', 'name'],
+            attributes: ['id', 'name', 'poster', 'count'],
             limit: req.query.limit,
             offset: (req.query.page - 1) * 50
         };
@@ -123,7 +123,7 @@ async function show(req, res, next) {
 
     const validator = new Validator({
         rules: {
-            id: 'required|int'
+            bookId: 'required|int'
         }
     });
     const input = validator.filter(req.params);
@@ -136,10 +136,11 @@ async function show(req, res, next) {
     try {
         const filter = {
             where: {
-                id: input.id
+                id: input.bookId
             }
         };
-        const result = await models.Book.findOne(filter);
+        const scopes = ['includeAuthor'];
+        const result = await models.Book.scope(scopes).findOne(filter);
         if (_.isNil(result)) {
             throw new HinterError('book', 'notFound');
         }
@@ -171,22 +172,20 @@ async function update(req, res, next) {
         return next(err);
     }
     try {
-        const filter = {
+        const filter = { 
             where: {
-                id: input.bookId
-            }
+                id: input.id
+            } 
         };
         const book = await models.Book.findOne({
             where: {
-                name: input.name,
-                authorId: input.authorId
+                id: input.id
             }
         });
-        if (!_.isNil(book)) {
-            throw new HinterError('book', 'exists');
+        if (_.isNil(book)) {
+            throw new HinterError('book', 'notFound');
         }
         await models.Book.update(input, filter);
-
         req.params.id = book.id;
 
         show(req, res, next);

@@ -19,7 +19,7 @@ module.exports = function (sequelize, TYPE) {
             charset: 'utf8',
             paranoid: false,
             timestamp: false,
-            engine: 'MYISAM',
+            //engine: 'MYISAM',
             indexes: [
                 {
                     fields: ['bookId'],
